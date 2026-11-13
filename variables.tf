@@ -257,5 +257,229 @@ EOT
       })
     }))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.automatic_tax == null || (v.automatic_tax.liability == null || (contains(["account", "self"], v.automatic_tax.liability.type)))
+      )
+    ])
+    error_message = "must be one of: \"account\", \"self\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.billing_mode == null || (v.billing_mode.flexible == null || (v.billing_mode.flexible.proration_discounts == null || (contains(["included", "itemized"], v.billing_mode.flexible.proration_discounts))))
+      )
+    ])
+    error_message = "must be one of: \"included\", \"itemized\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.billing_mode == null || (contains(["classic", "flexible"], v.billing_mode.type))
+      )
+    ])
+    error_message = "must be one of: \"classic\", \"flexible\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.billing_schedules == null || alltrue([for item in v.billing_schedules : (item.applies_to == null || alltrue([for item in item.applies_to : (contains(["price"], item.type))]))])
+      )
+    ])
+    error_message = "must be one of: \"price\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.billing_schedules == null || alltrue([for item in v.billing_schedules : (item.bill_until.duration == null || (contains(["day", "month", "week", "year"], item.bill_until.duration.interval)))])
+      )
+    ])
+    error_message = "must be one of: \"day\", \"month\", \"week\", \"year\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.billing_schedules == null || alltrue([for item in v.billing_schedules : (contains(["duration", "timestamp"], item.bill_until.type))])
+      )
+    ])
+    error_message = "must be one of: \"duration\", \"timestamp\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.cancellation_details == null || (v.cancellation_details.feedback == null || (contains(["customer_service", "low_quality", "missing_features", "other", "switched_service", "too_complex", "too_expensive", "unused"], v.cancellation_details.feedback)))
+      )
+    ])
+    error_message = "must be one of: \"customer_service\", \"low_quality\", \"missing_features\", \"other\", \"switched_service\", \"too_complex\", \"too_expensive\", \"unused\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.collection_method == null || (contains(["charge_automatically", "send_invoice"], v.collection_method))
+      )
+    ])
+    error_message = "must be one of: \"charge_automatically\", \"send_invoice\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.invoice_settings == null || (v.invoice_settings.issuer == null || (contains(["account", "self"], v.invoice_settings.issuer.type)))
+      )
+    ])
+    error_message = "must be one of: \"account\", \"self\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.pause_collection == null || (v.pause_collection.behavior == null || (contains(["keep_as_draft", "mark_uncollectible", "void"], v.pause_collection.behavior)))
+      )
+    ])
+    error_message = "must be one of: \"keep_as_draft\", \"mark_uncollectible\", \"void\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.acss_debit == null || (v.payment_settings.payment_method_options.acss_debit.mandate_options == null || (v.payment_settings.payment_method_options.acss_debit.mandate_options.transaction_type == null || (contains(["business", "personal"], v.payment_settings.payment_method_options.acss_debit.mandate_options.transaction_type))))))
+      )
+    ])
+    error_message = "must be one of: \"business\", \"personal\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.acss_debit == null || (v.payment_settings.payment_method_options.acss_debit.verification_method == null || (contains(["automatic", "instant", "microdeposits"], v.payment_settings.payment_method_options.acss_debit.verification_method)))))
+      )
+    ])
+    error_message = "must be one of: \"automatic\", \"instant\", \"microdeposits\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.bancontact == null || (v.payment_settings.payment_method_options.bancontact.preferred_language == null || (contains(["de", "en", "fr", "nl"], v.payment_settings.payment_method_options.bancontact.preferred_language)))))
+      )
+    ])
+    error_message = "must be one of: \"de\", \"en\", \"fr\", \"nl\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.card == null || (v.payment_settings.payment_method_options.card.mandate_options == null || (v.payment_settings.payment_method_options.card.mandate_options.amount_type == null || (contains(["fixed", "maximum"], v.payment_settings.payment_method_options.card.mandate_options.amount_type))))))
+      )
+    ])
+    error_message = "must be one of: \"fixed\", \"maximum\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.card == null || (v.payment_settings.payment_method_options.card.network == null || (contains(["amex", "cartes_bancaires", "diners", "discover", "eftpos_au", "girocard", "interac", "jcb", "link", "mastercard", "unionpay", "unknown", "visa"], v.payment_settings.payment_method_options.card.network)))))
+      )
+    ])
+    error_message = "must be one of: \"amex\", \"cartes_bancaires\", \"diners\", \"discover\", \"eftpos_au\", \"girocard\", \"interac\", \"jcb\", \"link\", \"mastercard\", \"unionpay\", \"unknown\", \"visa\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.card == null || (v.payment_settings.payment_method_options.card.request_three_d_secure == null || (contains(["any", "automatic", "challenge"], v.payment_settings.payment_method_options.card.request_three_d_secure)))))
+      )
+    ])
+    error_message = "must be one of: \"any\", \"automatic\", \"challenge\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.customer_balance == null || (v.payment_settings.payment_method_options.customer_balance.bank_transfer == null || (v.payment_settings.payment_method_options.customer_balance.bank_transfer.eu_bank_transfer == null || (contains(["BE", "DE", "ES", "FR", "IE", "NL"], v.payment_settings.payment_method_options.customer_balance.bank_transfer.eu_bank_transfer.country))))))
+      )
+    ])
+    error_message = "must be one of: \"BE\", \"DE\", \"ES\", \"FR\", \"IE\", \"NL\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.customer_balance == null || (v.payment_settings.payment_method_options.customer_balance.funding_type == null || (contains(["bank_transfer"], v.payment_settings.payment_method_options.customer_balance.funding_type)))))
+      )
+    ])
+    error_message = "must be one of: \"bank_transfer\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.payto == null || (v.payment_settings.payment_method_options.payto.mandate_options == null || (v.payment_settings.payment_method_options.payto.mandate_options.purpose == null || (contains(["dependant_support", "government", "loan", "mortgage", "other", "pension", "personal", "retail", "salary", "tax", "utility"], v.payment_settings.payment_method_options.payto.mandate_options.purpose))))))
+      )
+    ])
+    error_message = "must be one of: \"dependant_support\", \"government\", \"loan\", \"mortgage\", \"other\", \"pension\", \"personal\", \"retail\", \"salary\", \"tax\", \"utility\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.pix == null || (v.payment_settings.payment_method_options.pix.mandate_options == null || (v.payment_settings.payment_method_options.pix.mandate_options.amount_includes_iof == null || (contains(["always", "never"], v.payment_settings.payment_method_options.pix.mandate_options.amount_includes_iof))))))
+      )
+    ])
+    error_message = "must be one of: \"always\", \"never\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.pix == null || (v.payment_settings.payment_method_options.pix.mandate_options == null || (v.payment_settings.payment_method_options.pix.mandate_options.payment_schedule == null || (contains(["halfyearly", "monthly", "quarterly", "weekly", "yearly"], v.payment_settings.payment_method_options.pix.mandate_options.payment_schedule))))))
+      )
+    ])
+    error_message = "must be one of: \"halfyearly\", \"monthly\", \"quarterly\", \"weekly\", \"yearly\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.upi == null || (v.payment_settings.payment_method_options.upi.mandate_options == null || (v.payment_settings.payment_method_options.upi.mandate_options.amount_type == null || (contains(["fixed", "maximum"], v.payment_settings.payment_method_options.upi.mandate_options.amount_type))))))
+      )
+    ])
+    error_message = "must be one of: \"fixed\", \"maximum\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.payment_method_options == null || (v.payment_settings.payment_method_options.us_bank_account == null || (v.payment_settings.payment_method_options.us_bank_account.verification_method == null || (contains(["automatic", "instant", "microdeposits"], v.payment_settings.payment_method_options.us_bank_account.verification_method)))))
+      )
+    ])
+    error_message = "must be one of: \"automatic\", \"instant\", \"microdeposits\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_settings == null || (v.payment_settings.save_default_payment_method == null || (contains(["off", "on_subscription"], v.payment_settings.save_default_payment_method)))
+      )
+    ])
+    error_message = "must be one of: \"off\", \"on_subscription\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.pending_invoice_item_interval == null || (contains(["day", "month", "week", "year"], v.pending_invoice_item_interval.interval))
+      )
+    ])
+    error_message = "must be one of: \"day\", \"month\", \"week\", \"year\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.trial_settings == null || (contains(["cancel", "create_invoice", "pause"], v.trial_settings.end_behavior.missing_payment_method))
+      )
+    ])
+    error_message = "must be one of: \"cancel\", \"create_invoice\", \"pause\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.payment_behavior == null || (contains(["allow_incomplete", "default_incomplete", "error_if_incomplete", "pending_if_incomplete"], v.payment_behavior))
+      )
+    ])
+    error_message = "must be one of: \"allow_incomplete\", \"default_incomplete\", \"error_if_incomplete\", \"pending_if_incomplete\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscriptions : (
+        v.proration_behavior == null || (contains(["always_invoice", "create_prorations", "none"], v.proration_behavior))
+      )
+    ])
+    error_message = "must be one of: \"always_invoice\", \"create_prorations\", \"none\""
+  }
 }
 
